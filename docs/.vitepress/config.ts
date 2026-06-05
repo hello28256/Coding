@@ -2,10 +2,14 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { defineConfig } from 'vitepress'
 
-// 扫描 docs/{lang}/ 下的 .md 生成单门语言的 sidebar 条目。
+// 所有语言笔记都放在 docs/1001Coding/ 下，跟主站访问路径 /Coding/1001Coding/ 对齐。
+// 跟 book 仓库的 docs/1001Reading/ 命名习惯保持一致。
+const NOTES_ROOT = '1001Coding'
+
+// 扫描 docs/1001Coding/{lang}/ 下的 .md 生成单门语言的 sidebar 条目。
 // 每条用 H1 作为标题，文件名作为链接。
 function languageSidebar(lang: string) {
-  const langDir = `docs/${lang}`
+  const langDir = `docs/${NOTES_ROOT}/${lang}`
   return readdirSync(langDir)
     .filter((f) => f.endsWith('.md') && f !== 'index.md')
     .sort()
@@ -15,7 +19,7 @@ function languageSidebar(lang: string) {
       const h1 = content.match(/^#\s+(.+)$/m)
       return {
         text: h1 ? h1[1].trim() : name,
-        link: `/${lang}/${name}`,
+        link: `/${NOTES_ROOT}/${lang}/${name}`,
       }
     })
 }
@@ -24,17 +28,18 @@ function languageSidebar(lang: string) {
 // 没写 frontmatter 就用目录名。
 function languageLabel(lang: string): string {
   try {
-    const txt = readFileSync(`docs/${lang}/index.md`, 'utf8')
+    const txt = readFileSync(`docs/${NOTES_ROOT}/${lang}/index.md`, 'utf8')
     const m = txt.match(/^title:\s*(.+)$/m)
     if (m) return m[1].trim().replace(/^['"]|['"]$/g, '')
   } catch {}
   return lang
 }
 
-// 自动发现 docs/ 下的所有子目录作为一门语言。
-// 新增 docs/Rust/ 子目录 + 在该目录下放 index.md，无需改本文件即可出现在导航/侧栏。
+// 自动发现 docs/1001Coding/ 下的所有子目录作为一门语言。
+// 新增 docs/1001Coding/Rust/ 子目录 + 在该目录下放 index.md，
+// 无需改本文件即可出现在导航/侧栏。
 function discoverLanguages(): string[] {
-  return readdirSync('docs', { withFileTypes: true })
+  return readdirSync(`docs/${NOTES_ROOT}`, { withFileTypes: true })
     .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
     .map((d) => d.name)
     .sort()
@@ -43,7 +48,7 @@ function discoverLanguages(): string[] {
 const languages = discoverLanguages()
 const languageNavItems = languages.map((lang) => ({
   text: languageLabel(lang),
-  link: `/${lang}/`,
+  link: `/${NOTES_ROOT}/${lang}/`,
 }))
 
 // 站点基础信息
@@ -96,13 +101,13 @@ export default defineConfig({
     ],
 
     // 侧栏：每门语言自己的侧栏。
-    // 在某门语言内（路径以 /lang/ 开头）时显示该语言的笔记列表。
-    // 根（/）不显示侧栏（Coding 首页不需要）。
+    // 在某门语言内（路径以 /1001Coding/{lang}/ 开头）时显示该语言的笔记列表。
+    // 1001Coding 集合首页（/1001Coding/）不显示侧栏。
     sidebar: Object.fromEntries(
       languages.map((lang) => [
-        `/${lang}/`,
+        `/${NOTES_ROOT}/${lang}/`,
         [
-          { text: `${languageLabel(lang)} · 首页`, link: `/${lang}/` },
+          { text: `${languageLabel(lang)} · 首页`, link: `/${NOTES_ROOT}/${lang}/` },
           ...languageSidebar(lang),
         ],
       ])
