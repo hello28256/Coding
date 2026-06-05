@@ -1,0 +1,61 @@
+name: 部署 Coding 到 GitHub Pages
+
+# 触发时机：推送到 main 分支
+on:
+  push:
+    branches: [main]
+  # 允许手动触发
+  workflow_dispatch:
+
+# 部署到 GitHub Pages 需要的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 避免同一时间多次部署互相覆盖
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 完整历史，便于 lastUpdated 插件使用
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          # 锁 22 而非 20 —— GitHub 已在 deprecate Node 20 runner，
+          # Node 22 LTS 稳定且 VitePress 1.6 兼容
+          node-version: "22"
+
+      - name: 启用 pnpm（通过 corepack）
+        run: corepack enable pnpm
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 构建 VitePress 站点
+        run: npm run docs:build
+        # 产物路径：docs/.vitepress/dist
+
+      - name: 上传 Pages 工件
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
