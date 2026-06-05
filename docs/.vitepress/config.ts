@@ -83,7 +83,7 @@ export default defineConfig({
         items: [
           {
             text: 'GitHub 仓库',
-            link: 'https://github.com/hello28256/Coding',
+            link: 'https://github.com/hello28256/coding',
           },
           {
             text: 'GitHub Pages',
@@ -126,11 +126,11 @@ export default defineConfig({
     },
 
     // 右上角图标
-    socialLinks: [{ icon: 'github', link: 'https://github.com/hello28256/Coding' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/hello28256/coding' }],
 
     // 编辑本页
     editLink: {
-      pattern: 'https://github.com/hello28256/Coding/edit/main/docs/:path',
+      pattern: 'https://github.com/hello28256/coding/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页',
     },
   },
