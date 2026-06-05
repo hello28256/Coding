@@ -11,7 +11,7 @@ hero:
       link: /Python/
     - theme: alt
       text: GitHub 仓库
-      link: https://github.com/hello28256/coding
+      link: https://github.com/hello28256/Coding
 
 features:
   - title: 🐍 Python

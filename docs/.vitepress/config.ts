@@ -54,7 +54,9 @@ export default defineConfig({
   // srcDir 留空，默认就是当前 root（= docs/）。
 
   // GitHub Pages 子路径，必须以 / 开头和结尾
-  base: '/coding/',
+  // 仓库名是 Coding（大写 C），GitHub Pages 项目站点 URL 保留仓库名大小写，
+  // 这里 base 必须与之一致，否则站内所有链接 404。
+  base: '/Coding/',
 
   // 去掉 URL 里的 .html 后缀，访问 /foo/ 而不是 /foo.html。
   // GitHub Pages 原生支持目录 + index.html 结构，无需额外配置。
@@ -83,11 +85,11 @@ export default defineConfig({
         items: [
           {
             text: 'GitHub 仓库',
-            link: 'https://github.com/hello28256/coding',
+            link: 'https://github.com/hello28256/Coding',
           },
           {
             text: 'GitHub Pages',
-            link: 'https://hello28256.github.io/coding/',
+            link: 'https://hello28256.github.io/Coding/',
           },
         ],
       },
@@ -126,11 +128,11 @@ export default defineConfig({
     },
 
     // 右上角图标
-    socialLinks: [{ icon: 'github', link: 'https://github.com/hello28256/coding' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/hello28256/Coding' }],
 
     // 编辑本页
     editLink: {
-      pattern: 'https://github.com/hello28256/coding/edit/main/docs/:path',
+      pattern: 'https://github.com/hello28256/Coding/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页',
     },
   },
