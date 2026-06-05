@@ -2,53 +2,48 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { defineConfig } from 'vitepress'
 
-// 所有语言笔记都放在 docs/1001Coding/ 下，跟主站访问路径 /Coding/1001Coding/ 对齐。
-// 跟 book 仓库的 docs/1001Reading/ 命名习惯保持一致。
-const NOTES_ROOT = '1001Coding'
-
-// 扫描 docs/1001Coding/{lang}/ 下的 .md 生成单门语言的 sidebar 条目。
+// 扫描 docs/{book}/ 下的 .md 生成一本书的 sidebar 条目。
 // 每条用 H1 作为标题，文件名作为链接。
-function languageSidebar(lang: string) {
-  const langDir = `docs/${NOTES_ROOT}/${lang}`
-  return readdirSync(langDir)
+function bookSidebar(book: string) {
+  const bookDir = `docs/${book}`
+  return readdirSync(bookDir)
     .filter((f) => f.endsWith('.md') && f !== 'index.md')
     .sort()
     .map((f) => {
       const name = basename(f, '.md')
-      const content = readFileSync(join(langDir, f), 'utf8')
+      const content = readFileSync(join(bookDir, f), 'utf8')
       const h1 = content.match(/^#\s+(.+)$/m)
       return {
         text: h1 ? h1[1].trim() : name,
-        link: `/${NOTES_ROOT}/${lang}/${name}`,
+        link: `/${book}/${name}`,
       }
     })
 }
 
-// 读取每门语言的 index.md，提取 `title:` frontmatter 作为导航显示名。
+// 读取每本书的 index.md，提取 `title:` frontmatter 作为导航显示名。
 // 没写 frontmatter 就用目录名。
-function languageLabel(lang: string): string {
+function bookLabel(book: string): string {
   try {
-    const txt = readFileSync(`docs/${NOTES_ROOT}/${lang}/index.md`, 'utf8')
+    const txt = readFileSync(`docs/${book}/index.md`, 'utf8')
     const m = txt.match(/^title:\s*(.+)$/m)
     if (m) return m[1].trim().replace(/^['"]|['"]$/g, '')
   } catch {}
-  return lang
+  return book
 }
 
-// 自动发现 docs/1001Coding/ 下的所有子目录作为一门语言。
-// 新增 docs/1001Coding/Rust/ 子目录 + 在该目录下放 index.md，
-// 无需改本文件即可出现在导航/侧栏。
-function discoverLanguages(): string[] {
-  return readdirSync(`docs/${NOTES_ROOT}`, { withFileTypes: true })
+// 自动发现 docs/ 下的所有子目录作为一本书。
+// 新增 docs/1002Travel/ 子目录 + 在该目录下放 index.md，无需改本文件即可出现在导航/侧栏。
+function discoverBooks(): string[] {
+  return readdirSync('docs', { withFileTypes: true })
     .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
     .map((d) => d.name)
     .sort()
 }
 
-const languages = discoverLanguages()
-const languageNavItems = languages.map((lang) => ({
-  text: languageLabel(lang),
-  link: `/${NOTES_ROOT}/${lang}/`,
+const books = discoverBooks()
+const bookNavItems = books.map((book) => ({
+  text: bookLabel(book),
+  link: `/${book}/`,
 }))
 
 // 站点基础信息
@@ -82,8 +77,8 @@ export default defineConfig({
     nav: [
       { text: 'Coding', link: '/' },
       {
-        text: '语言',
-        items: languageNavItems,
+        text: '笔记',
+        items: bookNavItems,
       },
       {
         text: '在线访问',
@@ -100,15 +95,15 @@ export default defineConfig({
       },
     ],
 
-    // 侧栏：每门语言自己的侧栏。
-    // 在某门语言内（路径以 /1001Coding/{lang}/ 开头）时显示该语言的笔记列表。
-    // 1001Coding 集合首页（/1001Coding/）不显示侧栏。
+    // 侧栏：每本书自己的侧栏。
+    // 在某本书内（路径以 /1001Coding/ 开头）时显示该书的笔记列表。
+    // 根（/）不显示侧栏（Coding 首页不需要）。
     sidebar: Object.fromEntries(
-      languages.map((lang) => [
-        `/${NOTES_ROOT}/${lang}/`,
+      books.map((book) => [
+        `/${book}/`,
         [
-          { text: `${languageLabel(lang)} · 首页`, link: `/${NOTES_ROOT}/${lang}/` },
-          ...languageSidebar(lang),
+          { text: `${bookLabel(book)} · 首页`, link: `/${book}/` },
+          ...bookSidebar(book),
         ],
       ])
     ),
