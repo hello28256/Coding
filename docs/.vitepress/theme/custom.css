@@ -1,24 +1,23 @@
 /* siteTitle 颜色：让左上角 "Coding" 跟品牌色一致。
  * 默认 VitePress 用 --vp-c-text-1（中性灰），改为 --vp-c-brand-1（品牌主色）。
  * 亮 / 暗模式都跟着品牌色走，以后想换主色只动 --vp-c-brand-1 一处。
+ * 顶层 nav（"Coding" + "首页"）用品牌色，"在线访问" 下拉走默认色。
  * 顶层 nav（"Coding" + "在线访问" 下拉）字号 18px，跟 ../book 对齐。
  *
  * 三种 nav 元素需要分别覆盖：
  * - Logo:       .VPNavBarTitle .title → 品牌色
- * - 普通外链:   .VPNavBarMenuLink
+ * - 直链外链:   .VPNavBarMenuLink → 品牌色（"首页"）
  * - 下拉 trigger: .VPFlyout .text（不是 .VPFlyout .button——
  *                button 里有 <span class="text"> 包了实际文字，
  *                VitePress scoped style 给 .text 设字号，
- *                必须直接覆写 .text 才能生效）→ 默认色（不抢眼）
- *
- * 注意：.VPFlyout .text 只设 font-size，颜色走 VitePress 默认 --vp-c-text-1。 */
+ *                必须直接覆写 .text 才能生效）→ 默认色（"在线访问"） */
 .VPNavBar .VPNavBarTitle .title,
-.VPNavBar .VPNavBarTitle .title span {
+.VPNavBar .VPNavBarTitle .title span,
+.VPNavBar .VPNavBarMenuLink {
   color: var(--vp-c-brand-1);
   font-size: 18px;
 }
 
-.VPNavBar .VPNavBarMenuLink,
 .VPNavBar .VPFlyout .text {
   font-size: 18px;
 }
