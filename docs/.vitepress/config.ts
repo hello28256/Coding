@@ -70,8 +70,10 @@ export default defineConfig({
 
     // 侧栏：所有页面都显示笔记列表（平铺）。
     // 包括首页 / (即 docs/index.md)，让侧栏随时可点。
-    // 不放「首页」入口 —— 顶部 siteTitle 已经能回首页，侧栏里再来一个会冗余。
-    sidebar: rootSidebar(),
+    sidebar: [
+      { text: '首页', link: '/' },
+      ...rootSidebar(),
+    ],
 
     // 内置搜索（MiniSearch，支持中文）
     search: {

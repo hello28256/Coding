@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: 进入
-      link: /040测试.html
+      link: /040测试/
     - theme: alt
       text: GitHub 仓库
       link: https://github.com/hello28256/Coding
