@@ -3,32 +3,41 @@ import { onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { useRoute } from 'vitepress'
 import './custom.css'
 
-// 监听 VitePress 自带的 <footer class="VPFooter"> 元素，
-// 进入视口时加 .is-visible，触发 CSS fade-in + 上滑动画。
-// 用户往下滚到页脚时才浮现，首屏不出现。
+// 用户向下滚动任意距离才显示页脚。
+// 之前用 IntersectionObserver 在视口足够大时会被立即触发（首屏就显示），
+// 改用 scroll 监听更精确：只有用户主动滚动过才浮现。
 //
-// 路由切换时 footer 节点会被替换，需重新观察。
-// 阈值 0.15 = 露 15% 就开始显示，避免最后一刻才出现。
-let observer: IntersectionObserver | null = null
-let currentFooter: HTMLElement | null = null
+// scroll 用 passive + rAF 节流，避免滚动卡顿。
+// 路由切换时重新绑定（footer 节点会被替换）。
+let rafId: number | null = null
+let boundFooter: HTMLElement | null = null
+
+function onScroll() {
+  if (rafId !== null) return
+  rafId = requestAnimationFrame(() => {
+    rafId = null
+    if (window.scrollY > 0 && boundFooter) {
+      boundFooter.classList.add('is-visible')
+    }
+  })
+}
 
 function bind() {
-  observer?.disconnect()
-  const footer = document.querySelector<HTMLElement>('footer.VPFooter')
-  if (!footer) return
-  currentFooter = footer
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          (entry.target as HTMLElement).classList.add('is-visible')
-          observer?.unobserve(entry.target)
-        }
-      }
-    },
-    { threshold: 0.15 }
-  )
-  observer.observe(footer)
+  if (boundFooter) {
+    boundFooter.classList.remove('is-visible')
+  }
+  boundFooter = document.querySelector<HTMLElement>('footer.VPFooter')
+  if (!boundFooter) return
+  window.addEventListener('scroll', onScroll, { passive: true })
+}
+
+function unbind() {
+  window.removeEventListener('scroll', onScroll)
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
+  boundFooter = null
 }
 
 export default {
@@ -43,8 +52,7 @@ export default {
       )
     })
     onBeforeUnmount(() => {
-      observer?.disconnect()
-      currentFooter = null
+      unbind()
     })
   },
 }
