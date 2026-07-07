@@ -54,6 +54,13 @@ export default defineConfig({
     // 不放 "笔记" 下拉 —— 笔记已平铺到 docs/ 根，侧栏就是全集。
     nav: [
       {
+        // 直链外站 nav 项：跳到主站首页 hello28256.github.io
+        // VitePress 1.x: link 含 http(s):// 就自动当外链处理（加 target=_blank），
+        // 不需要显式 external: true（TS NavItem 类型里也没这个字段）。
+        text: '首页',
+        link: 'https://hello28256.github.io/',
+      },
+      {
         text: '在线访问',
         items: [
           {
