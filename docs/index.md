@@ -12,9 +12,4 @@ hero:
     - theme: alt
       text: GitHub 仓库
       link: https://github.com/hello28256/Coding
-
-features:
-  - icon: ⌨️
-    title: 编程学习笔记
-    details: 代码、踩坑、工具用法、Type Hints、并发模型……按编号排序，左侧栏随时可点。
 ---
