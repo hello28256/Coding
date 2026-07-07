@@ -44,6 +44,15 @@ export default defineConfig({
   lang: 'zh-CN',
   lastUpdated: true,
 
+  // 浏览器标签 favicon + Apple 触屏图标。
+  // 显式声明而不是依赖 VitePress 默认查找，
+  // 因为站点部署在 /Coding/ 子路径，显式声明最稳。
+  // 复用 ../book 的图标（docs/public/ 下两份），跟 book 保持一致。
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/Coding/favicon.png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/Coding/apple-touch-icon.png' }],
+  ],
+
   // VitePress 主题配置
   themeConfig: {
     // 站点 logo 文字（无图就用纯文字）
