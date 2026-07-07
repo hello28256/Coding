@@ -23,6 +23,14 @@
   font-size: 18px;
 }
 
+/* 隐藏顶部 nav 里外链 ↗ 箭头（VitePress 1.6.3 不支持
+ * nav 项的 externalLinkIcon 字段，只能用 CSS 兜底）。
+ * VitePress 给外链 link 加 .vp-external-link-icon class，箭头是
+ * ::after 伪元素。只隐藏 nav 范围，不影响 vp-doc 正文里的外链图标。 */
+.VPNavBar .vp-external-link-icon::after {
+  display: none !important;
+}
+
 /* 页脚 fade-in：默认隐藏（透明 + 略微下移），进入视口后浮现。
  * 由 theme/index.ts 的 IntersectionObserver 加 .is-visible 触发。
  * 用 transform + opacity 走 GPU，不触发 layout。 */

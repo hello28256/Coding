@@ -66,6 +66,8 @@ export default defineConfig({
         // 直链外站 nav 项：跳到主站首页 hello28256.github.io
         // VitePress 1.x: link 含 http(s):// 就自动当外链处理（加 target=_blank），
         // 不需要显式 external: true（TS NavItem 类型里也没这个字段）。
+        // VitePress 1.6.3 NavItem 不支持 externalLinkIcon 字段，
+        // 隐藏外链 ↗ 箭头走 custom.css 里的 CSS 规则。
         text: '首页',
         link: 'https://hello28256.github.io/',
       },
